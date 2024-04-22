@@ -7,6 +7,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.io.IOException;
+
 @Path("/template")
 public class TemplateResource {
 
@@ -16,7 +18,7 @@ public class TemplateResource {
     @POST
     @Path("/{templateId}")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response generateTemplate(String templateId, String body) {
+    public Response generateTemplate(String templateId, String body) throws IOException {
         return Response.ok(templateService.covert(templateId, body)).build();
     }
 }

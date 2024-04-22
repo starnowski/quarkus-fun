@@ -25,7 +25,7 @@ class TemplateResourceTest {
 
     private static Stream<Arguments> provideRequestWithTemplateAndExpectedResponse() {
         return Stream.of(
-                Arguments.of("req1.xml", "xml-to-json-1.liqd", "expected-json-1.json")
+                Arguments.of("req1.xml", "xml-to-json-1.liquid", "expected-json-1.json")
         );
     }
 
