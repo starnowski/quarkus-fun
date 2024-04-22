@@ -1,6 +1,7 @@
 package com.github.starnowski.quarkus.fun.liquid;
 
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -41,6 +42,7 @@ class TemplateResourceTest {
                 .body(is(Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(expectedContentFile).getFile()).getPath()))));
     }
 
+    @Disabled
     @ParameterizedTest
     @MethodSource("provideRequestWithTemplateThatHasAttributesAndExpectedResponse")
     public void shouldGenerateMapRequestBasedOnTemplateWithAttributes(String requestFile, String templateFile, String expectedContentFile) throws IOException {

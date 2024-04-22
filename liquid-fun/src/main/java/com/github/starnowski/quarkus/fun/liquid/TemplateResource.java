@@ -26,6 +26,6 @@ public class TemplateResource {
     @Path("/template-with-attributes/{templateId}")
     @Produces(MediaType.TEXT_PLAIN)
     public Response generateTemplateWithAttributes(String templateId, String body) throws IOException {
-        return Response.ok(templateService.covert(templateId, body)).build();
+        return Response.ok(templateService.covertWithAttributes(templateId, body)).build();
     }
 }
