@@ -5,6 +5,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Path("/template")
 public class TemplateResource {
@@ -15,7 +16,7 @@ public class TemplateResource {
     @POST
     @Path("/{templateId}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String generateTemplate(String templateId, String body) {
-        return templateService.covert(templateId, body);
+    public Response generateTemplate(String templateId, String body) {
+        return Response.ok(templateService.covert(templateId, body)).build();
     }
 }
