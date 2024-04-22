@@ -9,16 +9,23 @@ import jakarta.ws.rs.core.Response;
 
 import java.io.IOException;
 
-@Path("/template")
+@Path("/")
 public class TemplateResource {
 
     @Inject
     private TemplateService templateService;
 
     @POST
-    @Path("/{templateId}")
+    @Path("/template/{templateId}")
     @Produces(MediaType.TEXT_PLAIN)
     public Response generateTemplate(String templateId, String body) throws IOException {
+        return Response.ok(templateService.covert(templateId, body)).build();
+    }
+
+    @POST
+    @Path("/template-with-attributes/{templateId}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response generateTemplateWithAttributes(String templateId, String body) throws IOException {
         return Response.ok(templateService.covert(templateId, body)).build();
     }
 }
