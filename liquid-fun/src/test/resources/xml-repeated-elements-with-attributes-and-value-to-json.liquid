@@ -1,0 +1,12 @@
+{
+  "name": "{{ name }}",
+  "properties": [
+  {% for pro in property %}
+    {
+    {% for single_pro in pro %}
+      {% if single_pro[0] != '' %}"{{single_pro[0]}}"{% else %}"value"{% endif %}: "{{single_pro[1]}}"
+    {% endfor %}
+    }{% if last != false %},{% endif %}
+  {% endfor %}
+  ]
+}
