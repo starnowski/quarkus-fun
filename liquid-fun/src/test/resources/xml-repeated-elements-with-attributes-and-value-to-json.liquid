@@ -1,7 +1,7 @@
 {
   "name": "{{ name }}",
-  "properties": [
-    {% for pro in property %}{ {% for single_pro in pro %}
+  "properties": [{% for pro in property %}
+    {{'{'}}{% for single_pro in pro %}
       {% if single_pro[0] != '' %}"{{single_pro[0]}}"{% else %}"value"{% endif %}: "{{single_pro[1]}}"{% unless forloop.last %},{% endunless %}{% endfor %}
     }{% unless forloop.last %},{% endunless %}{% endfor %}
   ]
