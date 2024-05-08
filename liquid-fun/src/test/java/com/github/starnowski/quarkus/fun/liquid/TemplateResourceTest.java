@@ -1,6 +1,9 @@
 package com.github.starnowski.quarkus.fun.liquid;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
+import org.json.JSONException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -22,14 +25,19 @@ class TemplateResourceTest {
         return Stream.of(
                 Arguments.of("req1.xml", "xml-to-json-1.liquid", "expected-json-1.json"),
                 Arguments.of("req2.xml", "xml-to-json-1.liquid", "expected-json-1.json"),
-                Arguments.of("req-repeated-elements-with-attributes-and-value.xml", "xml-repeated-elements-with-attributes-and-value-to-json.liquid", "expected-repeated-elements-with-attributes-and-value.json"),
-                Arguments.of("req-repeated-elements-with-attributes-and-value.xml", "xml-render-repeated-elements-with-attributes-and-value-to-json.liquid", "expected-render-repeated-elements-with-attributes-and-value.json")
+                Arguments.of("req-repeated-elements-with-attributes-and-value.xml", "xml-repeated-elements-with-attributes-and-value-to-json.liquid", "expected-repeated-elements-with-attributes-and-value.json")
         );
     }
 
     private static Stream<Arguments> provideRequestWithTemplateThatHasAttributesAndExpectedResponse() {
         return Stream.of(
                 Arguments.of("req-with-attributes.xml", "xml-to-json-2.liquid", "expected-json-2.json")
+        );
+    }
+
+    private static Stream<Arguments> provideRequestWithTemplateAndExpectedResponseThatJSONIsGenerallyMatches() {
+        return Stream.of(
+                Arguments.of("req-repeated-elements-with-attributes-and-value.xml", "xml-render-repeated-elements-with-attributes-and-value-to-json.liquid", "expected-render-repeated-elements-with-attributes-and-value.json")
         );
     }
 
@@ -42,6 +50,18 @@ class TemplateResourceTest {
                 .then()
                 .statusCode(200)
                 .body(is(Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(expectedContentFile).getFile()).getPath()))));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideRequestWithTemplateAndExpectedResponseThatJSONIsGenerallyMatches")
+    public void shouldGenerateMapRequestBasedOnTemplateAndJsonShouldGenerallyMatch(String requestFile, String templateFile, String expectedContentFile) throws IOException, JSONException {
+        ExtractableResponse<Response> response = given()
+                .body(Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(requestFile).getFile()).getPath())))
+                .when().post("/template/{templateId}", templateFile)
+                .then()
+                .statusCode(200).extract();
+
+        org.skyscreamer.jsonassert.JSONAssert.assertEquals(Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(expectedContentFile).getFile()).getPath())), response.body().jsonPath().prettyPrint(), false);
     }
 
     @Disabled
