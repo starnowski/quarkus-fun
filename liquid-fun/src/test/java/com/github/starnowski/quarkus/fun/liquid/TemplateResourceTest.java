@@ -41,6 +41,13 @@ class TemplateResourceTest {
         );
     }
 
+    private static Stream<Arguments> provideRequestWithTemplateThatUseCustomFiltersAndExpectedResponse() {
+        return Stream.of(
+                Arguments.of("customFilters/req-without-name-tag.xml", "customFilters/xml-to-json-with-custom-filters-1.liquid", "customFilters/expected-json-with-null-name.json"),
+                Arguments.of("req1.xml", "customFilters/xml-to-json-with-custom-filters-1.liquid", "expected-json-1.json")
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("provideRequestWithTemplateAndExpectedResponse")
     public void shouldGenerateMapRequestBasedOnTemplate(String requestFile, String templateFile, String expectedContentFile) throws IOException {
@@ -62,6 +69,17 @@ class TemplateResourceTest {
                 .statusCode(200).extract();
 
         org.skyscreamer.jsonassert.JSONAssert.assertEquals(Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(expectedContentFile).getFile()).getPath())), response.body().jsonPath().prettyPrint(), false);
+    }
+
+    @ParameterizedTest
+    @MethodSource({"provideRequestWithTemplateAndExpectedResponse", "provideRequestWithTemplateThatUseCustomFiltersAndExpectedResponse"})
+    public void shouldGenerateMapRequestBasedOnTemplateWithCustomFilters(String requestFile, String templateFile, String expectedContentFile) throws IOException {
+        given()
+                .body(Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(requestFile).getFile()).getPath())))
+                .when().post("/template-with-custom-filters/{templateId}", templateFile)
+                .then()
+                .statusCode(200)
+                .body(is(Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(expectedContentFile).getFile()).getPath()))));
     }
 
     @Disabled

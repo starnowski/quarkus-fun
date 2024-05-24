@@ -28,4 +28,11 @@ public class TemplateResource {
     public Response generateTemplateWithAttributes(String templateId, String body) throws IOException {
         return Response.ok(templateService.covertWithAttributes(templateId, body)).build();
     }
+
+    @POST
+    @Path("/template-with-custom-filters/{templateId}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response generateTemplateWithCustomFilters(String templateId, String body) throws IOException {
+        return Response.ok(templateService.covertWithCustomFilters(templateId, body)).build();
+    }
 }
