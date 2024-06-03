@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.ser.impl.AttributePropertyWriter;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import liqp.Template;
 import liqp.TemplateContext;
 import liqp.TemplateParser;
@@ -21,13 +22,16 @@ import java.util.List;
 @ApplicationScoped
 public class TemplateService {
 
+    @Inject
+    private TemplateSupplier templateSupplier;
+
     public String covert(String templateFile, String payload) throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         ObjectMapper jsonMapper = new ObjectMapper();
 
         JsonNode xmlNode = xmlMapper.readTree(payload);
         String json = jsonMapper.writeValueAsString(xmlNode);
-        Template template = TemplateParser.DEFAULT.parse(Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(templateFile).getFile()).getPath())));
+        Template template = templateSupplier.get(templateFile);
 //        Template template = new TemplateParser.Builder().build().parse(Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(templateFile).getFile()).getPath())));
         return template.render(json);
     }
@@ -38,7 +42,7 @@ public class TemplateService {
         xmlMapper.setSerializerFactory(xmlMapper.getSerializerFactory().withSerializerModifier(new CustomBeanSerializerModifier()));
         JsonNode xmlNode = xmlMapper.readTree(payload);
         String json = jsonMapper.writeValueAsString(xmlNode);
-        Template template = TemplateParser.DEFAULT.parse(Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(templateFile).getFile()).getPath())));
+        Template template = templateSupplier.get(templateFile);
 //        Template template = new TemplateParser.Builder().build().parse(Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(templateFile).getFile()).getPath())));
         return template.render(json);
     }
