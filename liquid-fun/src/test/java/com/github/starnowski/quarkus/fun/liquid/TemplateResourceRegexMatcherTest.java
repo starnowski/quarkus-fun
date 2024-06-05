@@ -27,10 +27,10 @@ class TemplateResourceRegexMatcherTest {
                 Arguments.of("req1.xml", "xml-to-json-1.liquid", "expected-json-1.json"),
                 Arguments.of("req2.xml", "xml-to-json-1.liquid", "expected-json-1.json"),
                 Arguments.of("req-repeated-elements-with-attributes-and-value.xml", "xml-repeated-elements-with-attributes-and-value-to-json.liquid", "expected-repeated-elements-with-attributes-and-value.json"),
-                Arguments.of("req1.xml", "xml-to-json-with-current-year_month.liquid", "expected-json-with-current-year_month.json")
+                Arguments.of("req1.xml", "xml-to-json-with-current-year_month.liquid", "expected-json-with-current-year_month.json"),
+                Arguments.of("req1.xml", "xml-to-json-with-literal-regex-patterns.liquid", "expected-json-with-literal-regex-pattern.json")
         );
     }
-
 
     @ParameterizedTest
     @MethodSource("provideRequestWithTemplateAndExpectedResponse")

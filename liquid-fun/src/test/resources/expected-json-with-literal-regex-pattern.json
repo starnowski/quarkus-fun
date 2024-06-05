@@ -1,0 +1,6 @@
+{
+  "name": "Scuba Tank",
+  "year": "{{START_REGEXP}}\d\d\d\d{{END_REGEXP}}",
+  "month": "{{START_REGEXP}}\d\d{{END_REGEXP}}",
+  "regex": "\d\\d\w\.*(0)\Qsomethingsomething etc\E"
+}
