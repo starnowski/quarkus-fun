@@ -1,0 +1,4 @@
+<item name="first item">
+    <property attributeId="size">30</property>
+    <property attributeId="length" scale="metric">100</property>
+</item>

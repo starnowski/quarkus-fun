@@ -1,0 +1,14 @@
+{
+  "name": "first item",
+  "properties": [
+    {
+      "attributeId": "size",
+      "value": "30"
+    },
+    {
+      "attributeId": "length",
+      "scale": "metric",
+      "value": "100"
+    }
+  ]
+}
