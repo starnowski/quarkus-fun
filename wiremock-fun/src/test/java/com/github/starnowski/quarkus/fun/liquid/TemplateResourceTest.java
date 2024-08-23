@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import jakarta.inject.Inject;
 import org.json.JSONException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,9 +30,14 @@ class TemplateResourceTest {
 
     private WireMockServer wireMockServer;
 
+    @Inject
+    private TemplateResource templateResource;
+
     @BeforeEach
     public void setup(){
         wireMockServer = new WireMockServer(new WireMockConfiguration().dynamicPort());
+        wireMockServer.start();
+        templateResource.setUrl(wireMockServer.baseUrl());
     }
 
     @AfterEach
@@ -51,7 +57,7 @@ class TemplateResourceTest {
     @MethodSource("provideRequestWithTemplateAndExpectedResponse")
     public void shouldGenerateMapRequestBasedOnTemplate(String requestFile) throws IOException {
         // GIVEN
-        wireMockServer.stubFor(get(urlEqualTo("/test")).willReturn(
+        wireMockServer.stubFor(post(urlEqualTo("/test")).willReturn(
                         aResponse()
                                 .withHeader("Content-Type", "application/json")
                                 .withBody("""
@@ -72,7 +78,7 @@ class TemplateResourceTest {
                                 { "id": 1, "userId": 1, "title": "my todo" }
                                 """));
 
-        wireMockServer.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test")).withRequestBody(WireMock.equalTo(requestBody)));
+        wireMockServer.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo("/test")).withRequestBody(WireMock.equalTo(requestBody)));
 
     }
 
