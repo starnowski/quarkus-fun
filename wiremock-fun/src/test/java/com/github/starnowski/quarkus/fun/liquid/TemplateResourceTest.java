@@ -99,14 +99,13 @@ class TemplateResourceTest {
         byte[] binaryContent = Files.readAllBytes(Paths.get(new File(getClass().getClassLoader().getResource(requestFile).getFile()).getPath()));
         String base64 = Base64.getEncoder().encodeToString(binaryContent);
         String requestBody = String.format(
-                """
-                        {"data": "%s"}
-                """, base64
+                "{\"data\": \"%s\"}", base64
         );
 
         // WHEN
         given()
                 .body(requestBody)
+                .header("Content-Type", "application/json")
                 .when().post("/sendWrapped")
                 .then()
                 .statusCode(200)
