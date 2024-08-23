@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.stream.Stream;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -55,7 +56,7 @@ class TemplateResourceTest {
 
     @ParameterizedTest
     @MethodSource("provideRequestWithTemplateAndExpectedResponse")
-    public void shouldGenerateMapRequestBasedOnTemplate(String requestFile) throws IOException {
+    public void shouldSendTestPayload(String requestFile) throws IOException {
         // GIVEN
         wireMockServer.stubFor(post(urlEqualTo("/test")).willReturn(
                         aResponse()
@@ -79,6 +80,42 @@ class TemplateResourceTest {
                                 """));
 
         wireMockServer.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo("/test")).withRequestBody(WireMock.equalTo(requestBody)));
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideRequestWithTemplateAndExpectedResponse")
+    public void shouldReadJsonWithBase64AndSendBinaryContent(String requestFile) throws IOException {
+        // GIVEN
+        wireMockServer.stubFor(post(urlEqualTo("/test")).willReturn(
+                        aResponse()
+                                .withHeader("Content-Type", "application/json")
+                                .withBody("""
+                                { "id": 1, "userId": 1, "title": "my todo" }
+                                """)
+                )
+        );
+
+        byte[] binaryContent = Files.readAllBytes(Paths.get(new File(getClass().getClassLoader().getResource(requestFile).getFile()).getPath()));
+        String base64 = Base64.getEncoder().encodeToString(binaryContent);
+        String requestBody = String.format(
+                """
+                        {"data": "%s"}
+                """, base64
+        );
+
+        // WHEN
+        given()
+                .body(requestBody)
+                .when().post("/sendWrapped")
+                .then()
+                .statusCode(200)
+                .body(is("""
+                                { "id": 1, "userId": 1, "title": "my todo" }
+                                """));
+
+        wireMockServer.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo("/test"))
+                .withRequestBody(WireMock.binaryEqualTo(binaryContent)));
 
     }
 
