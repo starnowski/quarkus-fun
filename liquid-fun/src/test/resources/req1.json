@@ -1,0 +1,5 @@
+{
+  "stringProp": "hello",
+  "numberProp": 42,
+  "nullProp": null
+}

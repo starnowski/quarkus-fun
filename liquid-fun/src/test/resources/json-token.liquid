@@ -1,0 +1,46 @@
+{%- assign raw_tokens = "" -%}
+
+{%- comment -%}
+  Example model:
+  model.stringProp = "hello"
+  model.numberProp = 42
+  model.arrayProp = ["a", "b", "c"]
+  model.nullProp = null
+{%- endcomment -%}
+
+{%- if model.stringProp %}
+  {%- assign raw_tokens = raw_tokens | append: model.stringProp | append: "," -%}
+{%- endif %}
+
+{%- if model.numberProp %}
+  {%- assign raw_tokens = raw_tokens | append: model.numberProp | append: "," -%}
+{%- endif %}
+
+{%- if model.arrayProp %}
+  {%- for item in model.arrayProp %}
+    {%- assign raw_tokens = raw_tokens | append: item | append: "," -%}
+  {%- endfor -%}
+{%- endif %}
+
+{%- if model.nullProp %}
+  {%- assign raw_tokens = raw_tokens | append: model.nullProp | append: "," -%}
+{%- endif %}
+
+{%- comment -%}
+  Clean up: remove trailing comma, then split into array
+{%- endcomment -%}
+{%- assign raw_tokens = raw_tokens | split: "," -%}
+{%- assign tokens = "" | split: "" -%}
+{%- for t in raw_tokens %}
+  {%- unless t == "" %}
+    {%- assign tokens = tokens | push: t -%}
+  {%- endunless -%}
+{%- endfor -%}
+
+{
+  "tokens": [
+    {%- for t in tokens -%}
+      "{{ t }}"{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]
+}

@@ -36,6 +36,12 @@ public class TemplateService {
         return template.render(json);
     }
 
+    public String covertJson(String templateFile, String payload) throws IOException {
+        Template template = templateSupplier.get(templateFile);
+//        Template template = new TemplateParser.Builder().build().parse(Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(templateFile).getFile()).getPath())));
+        return template.render(payload);
+    }
+
     public String covertWithAttributes(String templateFile, String payload) throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         ObjectMapper jsonMapper = new ObjectMapper();

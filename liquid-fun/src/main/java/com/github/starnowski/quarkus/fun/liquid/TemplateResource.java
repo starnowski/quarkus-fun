@@ -1,6 +1,7 @@
 package com.github.starnowski.quarkus.fun.liquid;
 
 import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -20,6 +21,14 @@ public class TemplateResource {
     @Produces(MediaType.TEXT_PLAIN)
     public Response generateTemplate(String templateId, String body) throws IOException {
         return Response.ok(templateService.covert(templateId, body)).build();
+    }
+
+    @POST
+    @Path("/template/json/{templateId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response generateTemplateForJson(String templateId, String body) throws IOException {
+        return Response.ok(templateService.covertJson(templateId, body)).build();
     }
 
     @POST
