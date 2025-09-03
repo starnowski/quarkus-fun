@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +30,7 @@ class TemplateResourceTest {
                 Arguments.of("req-repeated-elements-with-attributes-and-value.xml", "xml-repeated-elements-with-attributes-and-value-to-json.liquid", "expected-repeated-elements-with-attributes-and-value.json")
         );
     }
+
     private static Stream<Arguments> provideJsonRequestWithTemplateAndExpectedResponse() {
         return Stream.of(
                 Arguments.of("req1.json", "json-token.liquid", "expected-json-with-token1.json")
@@ -103,14 +105,18 @@ class TemplateResourceTest {
 
     @ParameterizedTest
     @MethodSource("provideJsonRequestWithTemplateAndExpectedResponse")
-    public void shouldGenerateMapRequestBasedOnTemplateJson(String requestFile, String templateFile, String expectedContentFile) throws IOException {
-        given()
+    public void shouldGenerateMapRequestBasedOnTemplateJson(String requestFile, String templateFile, String expectedContentFile) throws IOException, JSONException {
+        ExtractableResponse<Response> response = given()
                 .body(Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(requestFile).getFile()).getPath())))
                 .contentType(ContentType.JSON)
                 .when()
                 .post("/template/json/{templateId}", templateFile)
                 .then()
                 .statusCode(200)
-                .body(is(Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(expectedContentFile).getFile()).getPath()))));
+                .extract();
+        String responsePayload = response.asString();
+        String expectedJson = Files.readString(Paths.get(new File(getClass().getClassLoader().getResource(expectedContentFile).getFile()).getPath()));
+        JSONAssert.assertEquals(expectedJson, responsePayload, false);
+
     }
 }

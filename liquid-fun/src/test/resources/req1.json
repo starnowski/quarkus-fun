@@ -1,5 +1,8 @@
 {
-  "stringProp": "hello",
-  "numberProp": 42,
-  "nullProp": null
+  "model": {
+    "stringProp": "hello",
+    "numberProp": 42,
+    "nullProp": null,
+    "arrayProp": ["a", "b", "c"]
+  }
 }
